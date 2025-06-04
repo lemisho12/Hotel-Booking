@@ -213,7 +213,17 @@ string inputPhone() {
 
 
  void displayAvailableRooms() {
-
+cout << "\nAvailable Rooms:\n";
+    bool found = false;
+    for (int i = 1; i <= ROOM_COUNT; ++i) {
+        if (!rooms[i]) {
+            cout << "- Room " << i << " ";
+            found = true;
+        }
+    }
+    if (!found) {
+        cout << "No rooms available.\n";
+    }
 
 }
 
