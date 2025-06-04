@@ -175,7 +175,39 @@ string inputPhone() {
 }
 
  void loadCustomersFromFile() {
+    ifstream file("customers.txt");
+    if (!file.is_open()) {
+        return;
+    }
+    string line;
+    while (getline(file, line)) {
+        stringstream ss(line);
+        Customer* newCustomer = new Customer;
+        string field;
 
+        getline(ss, newCustomer->id, ',');
+        getline(ss, newCustomer->name, ',');
+        getline(ss, newCustomer->phone, ',');
+        getline(ss, field, ','); newCustomer->roomNumber = stoi(field);
+        getline(ss, field, ','); newCustomer->checkIn = stoi(field);
+        getline(ss, field, ','); newCustomer->checkOut = stoi(field);
+        getline(ss, field, ','); newCustomer->stayDays = stoi(field);
+        getline(ss, field, ','); newCustomer->totalBill = stoi(field);
+        newCustomer->next = nullptr;
+        if (newCustomer->roomNumber >= 1 && newCustomer->roomNumber <= ROOM_COUNT) {
+            rooms[newCustomer->roomNumber] = true;
+        }
+        if (!head) {
+            head = newCustomer;
+        } else {
+            Customer* temp = head;
+            while (temp->next) {
+                temp = temp->next;
+            }
+            temp->next = newCustomer;
+        }
+    }
+    file.close();
 }
 
 
