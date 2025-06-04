@@ -253,6 +253,33 @@ cout << "\nAvailable Rooms:\n";
 
 void displayAllBookedRooms() {
 
+    if (!head) {
+        cout << "No bookings found.\n";
+        return;
+    }
+
+    Customer* temp = head;
+    // Set up table headers with formatting
+    cout << left << setw(16) << "ID" << setw(32) << "Name" << setw(14)
+         << "Phone" << setw(8) << "Room" << setw(12) << "Check-In"
+         << setw(12) << "Check-Out" << setw(8) << "Stay" << "Total Bill\n";
+    cout << string(120, '-') << "\n"; // Separator line
+
+    while (temp) {
+        Date checkInDisp = intToDate(temp->checkIn);
+        Date checkOutDisp = intToDate(temp->checkOut);
+
+        cout << setw(16) << temp->id
+             << setw(32) << temp->name
+             << setw(14) << temp->phone
+             << setw(8) << temp->roomNumber
+             << setfill('0') << setw(2) << checkInDisp.day << "/" << setfill('0') << setw(2) << checkInDisp.month << "/" << setw(4) << checkInDisp.year << setfill(' ') << " " // Check-In
+             << setfill('0') << setw(2) << checkOutDisp.day << "/" << setfill('0') << setw(2) << checkOutDisp.month << "/" << setw(4) << checkOutDisp.year << setfill(' ') << " " // Check-Out
+             << setw(8) << temp->stayDays
+             << temp->totalBill << "\n";
+        temp = temp->next;
+    }
+
 
 }
 
@@ -363,7 +390,29 @@ void searchCustomer() {
 
 }
 void sortCustomers() {
+if (!head || !head->next) {
+        cout << "Not enough customers to sort.\n";
+        return; // No need to sort if 0 or 1 customer
+    }
 
+    // This is a basic bubble sort implementation for a linked list by swapping data
+    for (Customer* i = head; i; i = i->next) {
+        for (Customer* j = i->next; j; j = j->next) {
+            if (i->id > j->id) {
+                // Swap all data fields between the two customer nodes
+                swap(i->id, j->id);
+                swap(i->name, j->name);
+                swap(i->phone, j->phone);
+                swap(i->roomNumber, j->roomNumber);
+                swap(i->checkIn, j->checkIn);
+                swap(i->checkOut, j->checkOut);
+                swap(i->stayDays, j->stayDays);
+                swap(i->totalBill, j->totalBill);
+            }
+        }
+    }
+    cout << "Customers sorted by ID.\n";
+    saveCustomersToFile(); //
 }
 
 
