@@ -343,12 +343,111 @@ void bookRoom() {
 
 }
 void updateBooking() {
+ string id_to_find;
+    regex idPattern("^[a-zA-Z0-9]{1,15}$"); 
 
+    /
+    while (true) {
+        cout << "Enter Customer ID to update: ";
+        getline(cin, id_to_find);
+        if (regex_match(id_to_find, idPattern)) {
+            break;
+        }
+        cout << "Invalid ID format! Only alphanumeric characters (1-15) allowed.\n";
+    }
+
+    Customer* temp = findCustomerById(id_to_find); 
+
+    if (temp) {
+    
+        Date currentCheckInDate = intToDate(temp->checkIn);
+        Date currentCheckOutDate = intToDate(temp->checkOut);
+
+        cout << "Customer Found. Current Details:\n";
+        cout << "ID: " << temp->id << "\n";
+        cout << "Name: " << temp->name << "\n";
+        cout << "Room: " << temp->roomNumber << "\n";
+        cout << "Current Check-in Date: " << setfill('0') << setw(2) << currentCheckInDate.day << "/" << setfill('0') << setw(2) << currentCheckInDate.month << "/" << setw(4) << currentCheckInDate.year << setfill(' ') << "\n";
+        cout << "Current Check-out Date: " << setfill('0') << setw(2) << currentCheckOutDate.day << "/" << setfill('0') << setw(2) << currentCheckOutDate.month << "/" << setw(4) << currentCheckOutDate.year << setfill(' ') << "\n";
+        cout << "Current Stay Duration: " << temp->stayDays << " days\n";
+        cout << "Current Total Bill: " << temp->totalBill << " birr\n";
+
+
+        Date newCheckOutDate;
+        while(true) {
+            newCheckOutDate = inputDate("Enter NEW Check-out Date for extension");
+            
+            if (dateToInt(newCheckOutDate) > dateToInt(currentCheckOutDate)) {
+                break;
+            }
+            cout << "New check-out date must be after the current check-out date! Please try again.\n";
+        }
+
+    
+        temp->checkOut = dateToInt(newCheckOutDate);
+        
+        temp->stayDays = daysBetween(currentCheckInDate, newCheckOutDate);
+        
+        temp->totalBill = temp->stayDays * PRICE_PER_DAY;
+
+        saveCustomersToFile();
+        cout << "Booking updated successfully.\n";
+        cout << "New Check-out Date: " << setfill('0') << setw(2) << newCheckOutDate.day << "/" << setfill('0') << setw(2) << newCheckOutDate.month << "/" << setw(4) << newCheckOutDate.year << setfill(' ') << "\n";
+        cout << "New Stay Duration: " << temp->stayDays << " days\n";
+        cout << "New Total Bill: " << temp->totalBill << " birr\n";
+    } else {
+        cout << "Customer not found.\n";
+    }
 
 }
 
 void deleteBooking() {
+string id_to_find;
+    regex idPattern("^[a-zA-Z0-9]{1,15}$"); 
 
+    while (true) {
+        cout << "Enter Customer ID to delete: ";
+        getline(cin, id_to_find);
+        if (regex_match(id_to_find, idPattern)) {
+            break;
+        }
+        cout << "Invalid ID format! Only alphanumeric characters (1-15) allowed.\n";
+    }
+
+    Customer *temp = head, *prev = nullptr;
+
+    while (temp) {
+        if (temp->id == id_to_find) { 
+            
+            ofstream outFile("archived_customers.txt", ios::app); 
+            if (!outFile.is_open()) {
+                cerr << "Error: Could not open archived_customers.txt for writing.\n";
+            
+            } else {
+                outFile << temp->id << "," << temp->name << "," << temp->phone << ","
+                        << temp->roomNumber << "," << temp->checkIn << "," << temp->checkOut
+                        << "," << temp->stayDays << "," << temp->totalBill << "\n";
+                outFile.close();
+            }
+
+            rooms[temp->roomNumber] = false; // Mark room as available
+
+            // Remove from linked list
+            if (!prev) {
+                head = temp->next; // If deleting the head
+            } else {
+                prev->next = temp->next; // If deleting a middle/end node
+            }
+
+            delete temp; // Free memory
+            saveCustomersToFile(); // Save updated customer list
+            cout << "Customer checked out and archived successfully.\n";
+            return;
+        }
+        prev = temp;
+        temp = temp->next;
+    }
+    cout << "Customer not found.\n";
 
 }
 void searchCustomer() {
