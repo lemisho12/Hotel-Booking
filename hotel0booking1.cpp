@@ -197,6 +197,58 @@ void bookRoom() {
 
 
 
+    Customer* newCustomer = new Customer;
+    newCustomer->id = inputID(true);
+    newCustomer->name = inputName();
+    newCustomer->phone = inputPhone();
+    newCustomer->roomNumber = inputRoom();
+
+    Date checkInDate;
+    while (true) {
+        checkInDate = inputDate("Enter Check-in Date");
+
+        Date fixedCurrentDate = {4, 6, 2025};
+        if (dateToInt(checkInDate) >= dateToInt(fixedCurrentDate)) {
+            break;
+        }
+        cout << "Check-in date cannot be in the past! Please try again.\n";
+    }
+
+    Date checkOutDate;
+    while (true) {
+        checkOutDate = inputDate("Enter Check-out Date");
+         if (dateToInt(checkOutDate) > dateToInt(checkInDate)) {
+            break;
+        }
+        cout << "Check-out date must be after check-in date! Please try again.\n";
+    }
+
+    newCustomer->checkIn = dateToInt(checkInDate);
+    newCustomer->checkOut = dateToInt(checkOutDate);
+     newCustomer->stayDays = daysBetween(checkInDate, checkOutDate);
+    newCustomer->totalBill = newCustomer->stayDays * PRICE_PER_DAY;
+    newCustomer->next = nullptr;
+
+    rooms[newCustomer->roomNumber] = true;
+
+     if (!head) {
+        head = newCustomer;
+    } else {
+        Customer* temp = head;
+        while (temp->next) {
+            temp = temp->next;
+        }
+        temp->next = newCustomer;
+    }
+
+     cout << "Check-in Date: " << setfill('0') << setw(2) << checkInDate.day << "/" << setfill('0') << setw(2) << checkInDate.month << "/" << setw(4) << checkInDate.year << setfill(' ') << "\n";
+    cout << "Check-out Date: " << setfill('0') << setw(2) << checkOutDate.day << "/" << setfill('0') << setw(2) << checkOutDate.month << "/" << setw(4) << checkOutDate.year << setfill(' ') << "\n";
+    cout << "Stay Duration: " << newCustomer->stayDays << " days\n";
+    cout << "Total Bill: " << newCustomer->totalBill << " birr\n";
+
+    saveCustomersToFile();  
+    cout << "Room booked successfully!\n";
+
 }
 void updateBooking() {
 
@@ -219,7 +271,36 @@ void sortCustomers() {
 
 void manageBookedRooms() {
 
+while (true) {
+        cout << "\n--- Booked Rooms Management ---\n";
+        cout << "1. Display All Booked Rooms\n";
+        cout << "2. Search for a Customer by ID\n";
+        cout << "3. Sort Customers by ID (and then display)\n";
+        cout << "0. Back to Main Menu\n";
+        cout << "-------------------------------\n";
+        cout << "Choose an option: ";
 
+        int choice;
+        cin >> choice;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Consume the newline character
+
+        switch (choice) {
+            case 1:
+                displayAllBookedRooms();
+                break;
+            case 2:
+                searchCustomer();
+                break;
+            case 3:
+                sortCustomers();
+                displayAllBookedRooms(); // Display after sorting
+                break;
+            case 0:
+                return; // Go back to the main menu
+            default:
+                cout << "Invalid option. Please enter a number from the menu.\n";
+        }
+    }
 
 }
 
