@@ -223,6 +223,16 @@ string inputPhone() {
     file.close();
 }
 
+Customer* findCustomerById(const string& id) {
+    Customer* temp = head;
+    while (temp) {
+        if (temp->id == id) {
+            return temp;
+        }
+        temp = temp->next;
+    }
+    return nullptr; // Customer not found
+}
 
 
  void displayAvailableRooms() {
