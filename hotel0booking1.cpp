@@ -170,8 +170,19 @@ string inputPhone() {
 
 
  void saveCustomersToFile() {
-
-
+    ofstream file("customers.txt");
+    if (!file.is_open()) {
+        cout << "Error: Could not open customers.txt for writing.\n";
+        return;
+    }
+    Customer* temp = head;
+    while (temp) {
+        file << temp->id << "," << temp->name << "," << temp->phone << ","
+             << temp->roomNumber << "," << temp->checkIn << "," << temp->checkOut << ","
+             << temp->stayDays << "," << temp->totalBill << "\n";
+        temp = temp->next;
+    }
+    file.close();
 }
 
  void loadCustomersFromFile() {
