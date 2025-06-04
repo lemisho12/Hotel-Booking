@@ -210,6 +210,39 @@ void deleteBooking() {
 void searchCustomer() {
 
 
+ string id_to_find;
+    regex idPattern("^[a-zA-Z0-9]{1,15}$"); 
+
+    while (true) {
+        cout << "Enter Customer ID to search: ";
+        getline(cin, id_to_find);
+        if (regex_match(id_to_find, idPattern)) {
+            break;
+        }
+        cout << "Invalid ID format! Only alphanumeric characters (1-15) allowed.\n";
+    }
+
+    Customer* temp = findCustomerById(id_to_find);  
+
+    if (temp) {
+        cout << "\nCustomer Found:\n";
+        cout << "ID: " << temp->id << "\n";
+        cout << "Name: " << temp->name << "\n";
+        cout << "Phone: " << temp->phone << "\n";
+
+        Date checkInDisp = intToDate(temp->checkIn);
+        Date checkOutDisp = intToDate(temp->checkOut);
+
+        cout << "Room Number: " << temp->roomNumber << "\n";
+        cout << "Check-in Date: " << setfill('0') << setw(2) << checkInDisp.day << "/" << setfill('0') << setw(2) << checkInDisp.month << "/" << setw(4) << checkInDisp.year << setfill(' ') << "\n";
+        cout << "Check-out Date: " << setfill('0') << setw(2) << checkOutDisp.day << "/" << setfill('0') << setw(2) << checkOutDisp.month << "/" << setw(4) << checkOutDisp.year << setfill(' ') << "\n";
+        cout << "Stay Days: " << temp->stayDays << "\n";
+        cout << "Total Bill: " << temp->totalBill << " birr\n";
+    } else {
+        cout << "Customer not found.\n";
+    }
+
+
 
 }
 void sortCustomers() {
