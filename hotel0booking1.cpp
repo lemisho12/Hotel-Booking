@@ -346,7 +346,7 @@ void updateBooking() {
  string id_to_find;
     regex idPattern("^[a-zA-Z0-9]{1,15}$"); 
 
-    /
+    
     while (true) {
         cout << "Enter Customer ID to update: ";
         getline(cin, id_to_find);
